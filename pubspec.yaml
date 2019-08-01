@@ -1,0 +1,43 @@
+name: intellispot
+description: Project of SE231
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  #permission_handler: ^3.2.1+1
+  tobias: ^1.0.0+1
+  amap_base: ^0.3.5
+  flutter_luban: ^0.1.7+1
+  firebase_core: ^0.4.0+8
+  firebase_admob: ^0.9.0+2
+  flutter_spinkit: ^3.1.0
+  provider: ^2.0.0
+  path_provider: ^1.1.0
+  scoped_model: ^1.0.1
+  cookie_jar: ^1.0.1
+  dio: ^2.1.12
+  flutter_swiper: ^1.1.6
+  image_picker: ^0.6.0+17
+  flutter_sound: ^1.4.2
+  audio_recorder: ^1.0.1
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^0.1.2
+  font_awesome_flutter: ^8.5.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/diamond.png
+    - assets/ArticlePic.png
+    - assets/profilePic.jpg
+    - assets/slide1.jpg
+    - assets/slide2.jpg
+    - assets/slide0.jpg

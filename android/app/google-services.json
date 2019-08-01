@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "32638050661",
+    "firebase_url": "https://intellispot-sjtu-se231-92e78.firebaseio.com",
+    "project_id": "intellispot-sjtu-se231",
+    "storage_bucket": "intellispot-sjtu-se231.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:32638050661:android:d4aa2e4aeed04c49",
+        "android_client_info": {
+          "package_name": "com.se231.intellispot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "32638050661-as2be0khk653c5b52tfh2nuqit8rjio6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.se231.intellispot",
+            "certificate_hash": "2b09157725afec9857b0265fcc99439234aa4b55"
+          }
+        },
+        {
+          "client_id": "32638050661-1f7mct6ev2mt5fpdseujimdft8sv043u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGK2NCwOWT9e9pmBSmllsfufL8il9Vdd0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "32638050661-1f7mct6ev2mt5fpdseujimdft8sv043u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
