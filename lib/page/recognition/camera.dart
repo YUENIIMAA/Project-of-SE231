@@ -132,7 +132,7 @@ class _RecognitionPageState extends State<RecognitionPage> with WidgetsBindingOb
       floatingActionButton: FloatingActionButton.extended(
           icon: Icon(Icons.camera_enhance),
           backgroundColor: Colors.cyan,
-          label: Text("新建"),
+          label: Text("拍照识别"),
           onPressed:(){
             _showSeletPage(context);
           }

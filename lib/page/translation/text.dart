@@ -9,6 +9,8 @@ import 'package:intellispot/page/translation/result.dart';
 import 'package:flutter_luban/flutter_luban.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 
+import 'audio.dart';
+
 const String testDevice = '21C6A633B0E4E1F4593791B535F2554D';
 
 class TranslationPage extends StatefulWidget {
@@ -20,8 +22,10 @@ class TranslationPageState extends State<TranslationPage> {
 
   final _languages=<String>["英语","中文（简体）","日语","法语","德语"];
   final _code={"英语":"en","中文（简体）":"zh","日语":"jp","法语":"fra","德语":"de"};
+  final _code0={"英语":"en","中文（简体）":"zh-CHS","日语":"ja","法语":"fr","德语":"de"};
+  final _code1={"日语":"ja","中文（简体）":"zh-CHS","英语":"en","法语":"fr","德语":"de",};
 
-  String _sourceLan = "英文";
+  String _sourceLan = "英语";
   String _destLan="中文（简体）";
 
 
@@ -150,7 +154,7 @@ class TranslationPageState extends State<TranslationPage> {
     Navigator.of(context)
         .push(new MaterialPageRoute<void>(builder: (BuildContext context) {
       return new Scaffold(
-          appBar: new AppBar(title: Text("选择语言")),
+          appBar: new AppBar(title: Text("选择语言"),backgroundColor: Colors.cyan),
           body: ListView.builder(
               padding: const EdgeInsets.all(16.0),
               itemCount: _languages.length * 2 - 1,
@@ -252,7 +256,7 @@ class TranslationPageState extends State<TranslationPage> {
   /*
   从别的地方移植过来的上传函数
    */
-  Future<String> upload(String filepath) async {
+  Future<String> upload(String filepath,String src, String dst) async {
     try {
       Response response;
 
@@ -271,7 +275,13 @@ class TranslationPageState extends State<TranslationPage> {
 
       FormData formData = new FormData.from({
         "files": new UploadFileInfo(new File(filepath), "upload.jpg"),
+        "src":src,
+        "dst":dst
       });
+
+      print("==========================");
+      print(src);
+      print(dst);
 
       response = await userModel.dio.post("/translation/translate-picture", data: formData);
 
@@ -290,7 +300,7 @@ class TranslationPageState extends State<TranslationPage> {
   从别的地方移植过来的上传函数
    */
 
-  void _imagePicker(String via) async{
+  void _imagePicker(String via, String src, String dst) async{
     File img = null;
     if (via == "Gallery") {
       img = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -302,7 +312,7 @@ class TranslationPageState extends State<TranslationPage> {
       String imagePath = img.path;
 
       //upload(imagePath);
-      Future<String> result =upload(imagePath);
+      Future<String> result =upload(imagePath,src,dst);
       Navigator.push(context,
           new MaterialPageRoute(builder: (BuildContext context) {
             return new TranslationResult(imagePath: imagePath, result:result);
@@ -317,7 +327,7 @@ class TranslationPageState extends State<TranslationPage> {
   /*
   选择使用相机还是相册获取图片
    */
-  void _showSeletPage(context){
+  void _showSeletPage(context, String src, String dst){
     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc){
@@ -329,7 +339,7 @@ class TranslationPageState extends State<TranslationPage> {
                     title: new Text('拍摄新的照片'),
                     onTap: () {
                       Navigator.pop(context);
-                      _imagePicker("Camera");
+                      _imagePicker("Camera",src,dst);
                     }
                 ),
                 new ListTile(
@@ -337,7 +347,7 @@ class TranslationPageState extends State<TranslationPage> {
                   title: new Text('从相册选取'),
                   onTap: () {
                     Navigator.pop(context);
-                    _imagePicker("Gallery");
+                    _imagePicker("Gallery",src,dst);
                   },
                 ),
               ],
@@ -358,14 +368,7 @@ class TranslationPageState extends State<TranslationPage> {
             IconButton(
                 icon: new Icon(Icons.camera_enhance, size: 30.0),
                 onPressed: () {
-                  _showSeletPage(context);
-                  /*
-                  cameras = await availableCameras();
-                  Navigator.push(context,
-                      new MaterialPageRoute(builder: (BuildContext context) {
-                        return new CameraApp();
-                      }));
-                  */
+                  _showSeletPage(context,_code1[_sourceLan],_code1[_destLan]);
                 }),
             new Text("拍照"),
           ]),
@@ -373,30 +376,14 @@ class TranslationPageState extends State<TranslationPage> {
             IconButton(
                 icon: new Icon(Icons.mic, size: 30.0),
                 onPressed: () {
-                  /*Navigator.push(context,
+                  Navigator.push(context,
                       new MaterialPageRoute(builder: (BuildContext context) {
-                        return new AudioTranslationPage();
-                      }));*/
-                  Navigator.of(context).pushNamed('/audio');
+                        return new AudioTranslationPage(src:_code0[_sourceLan],dst: _code0[_destLan]);
+                      }));
+                  //Navigator.of(context).pushNamed('/audio');
                 }),
             new Text("录音"),
           ]),
-          new Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            IconButton(
-                icon: new Icon(Icons.person_outline, size: 30.0),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        //提示框组
-                        title: Text("请先充值会员"),
-                      );
-                    },
-                  );
-                }),
-            new Text("人工"),
-          ])
         ]);
   }
 
@@ -489,7 +476,7 @@ class TransMessage extends StatelessWidget {
           return Container(
             padding: EdgeInsets.only(left: 2.0, right: 2.0, bottom: 2.0),
             child: Card(
-              color: Colors.blue,
+              color: Colors.cyan,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(0.0))),
               margin: EdgeInsets.only(left: 8.0, right: 8.0),
@@ -709,11 +696,7 @@ class TransRecordState extends State<TransRecord> {
 
       List<Result> list = [];
       for (int i = 0; i < response.data["data"].length; i++) {
-        /*Result r = new Result(
-            response.data["data"][i]["originalText"].toString(),
-            response.data["data"][i]["translatedText"].toString());*/
         Result s= new Result.fromJson(response.data["data"][i]);
-        //list.add(r);
         list.add(s);
       }
       _list = list;

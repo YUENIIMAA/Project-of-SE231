@@ -10,33 +10,35 @@ import 'package:intellispot/page/translation/result.dart';
 
 
 class AudioTranslationPage extends StatefulWidget {
+  AudioTranslationPage({this.src,this.dst});
+  final String src;
+  final String dst;
+
   @override
-  _AudioTranslationPageState createState() => new _AudioTranslationPageState();
+  _AudioTranslationPageState createState() => new _AudioTranslationPageState(src:src,dst:dst);
 }
 
 class _AudioTranslationPageState extends State<AudioTranslationPage> {
 
-
-
+  _AudioTranslationPageState({this.src,this.dst});
+  final String src;
+  final String dst;
   AudioTransResult _message;
-
   bool _showResult=false;
-
   bool _isRecording = false;
-
   StreamSubscription _recorderSubscription;
   StreamSubscription _dbPeakSubscription;
-
   FlutterSound flutterSound;
-
   String _recorderTxt = '00:00:00';
-
   double _dbLevel;
-
   double slider_current_position = 0.0;
   double max_duration = 1.0;
-
   String path;
+//////////////////////////////////////////////////
+  bool _isPlaying = false;
+  StreamSubscription _playerSubscription;
+  String _playerTxt = '00:00:00';
+/////////////////////////////////////////////////
 
 
   @override
@@ -117,7 +119,8 @@ class _AudioTranslationPageState extends State<AudioTranslationPage> {
         this._recorderTxt = '00:00:00';
         this._isRecording = false;
         this._showResult=true;
-        this._message=new AudioTransResult(result:upload(path));
+        startPlayer();
+        this._message=new AudioTransResult(result:upload(path,src,dst));
       });
 
 
@@ -126,7 +129,36 @@ class _AudioTranslationPageState extends State<AudioTranslationPage> {
     }
   }
 
-  Future<String> upload(String filepath) async {
+  /////////////////////////
+  void startPlayer() async{
+    String result = await flutterSound.startPlayer(null);
+    await flutterSound.setVolume(1.0);
+    print('startPlayer: $result');
+
+    try {
+      _playerSubscription = flutterSound.onPlayerStateChanged.listen((e) {
+        if (e != null) {
+          slider_current_position = e.currentPosition;
+          max_duration = e.duration;
+
+
+          DateTime date = new DateTime.fromMillisecondsSinceEpoch(
+              e.currentPosition.toInt(),
+              isUtc: true);
+          String txt = DateFormat('mm:ss:SS', 'en_GB').format(date);
+          this.setState(() {
+            this._isPlaying = true;
+            this._playerTxt = txt.substring(0, 8);
+          });
+        }
+      });
+    } catch (err) {
+      print('error: $err');
+    }
+  }
+  /////////////////////////
+
+  Future<String> upload(String filepath, String src, String dst) async {
     try {
       Response response;
 
@@ -134,17 +166,22 @@ class _AudioTranslationPageState extends State<AudioTranslationPage> {
 
       FormData formData = new FormData.from({
         "files": new UploadFileInfo(new File(filepath), "upload.m4a"),
+        "src":src,
+        "dst":dst
       });
+      print("=======================================================");
+      print(src);
+      print(dst);
 
       response = await userModel.dio.post("/translation/translate-audio", data: formData);
       print(response.statusCode);
       print(response.data);
       if(response.data["message"]=="失败")
-        return "fail";
+        return "翻译失败";
       return response.data["data"].toString();
     } catch (e) {
       print(e);
-      return "fail";
+      return "翻译失败";
     }
   }
 

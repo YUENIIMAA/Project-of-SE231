@@ -134,7 +134,7 @@ class _MapPageState extends State<MapPage> {
       floatingActionButton: FloatingActionButton.extended(
           icon: Icon(Icons.add),
           backgroundColor: Colors.cyan,
-          label: Text("添加"),
+          label: Text("搜索"),
           onPressed:(){
             _showSeletPage(context);
           }

@@ -36,8 +36,8 @@ class SettingsPage extends StatelessWidget {
               children: <Widget>[
                 _buildSettingsTile(context),
                 _buildVipTile(context),
-                _buildHelpTile(context),
-                _buildFeedTile(context),
+                //_buildHelpTile(context),
+                //_buildFeedTile(context),
                 _buildAboutTile(context),
               ],
             ),
@@ -65,11 +65,15 @@ class SettingsPage extends StatelessWidget {
 
   Widget _buildSettingsTile(BuildContext context) {
     return ListTile(
-      leading: Icon(Icons.settings),
-      title: Text('设置'),
-      trailing: Icon(Icons.chevron_right),
-      //onTap: () => _handleSettingsAction(context),
-    );
+        leading: Icon(Icons.settings),
+        title: Text('设置'),
+        trailing: Icon(Icons.chevron_right),
+        onTap: () {
+          Navigator.push(context,
+              new MaterialPageRoute(builder: (BuildContext context) {
+                return new SettingPage();
+              }));
+        });
   }
 
   Widget _buildVipTile(BuildContext context) {
@@ -108,6 +112,29 @@ class SettingsPage extends StatelessWidget {
       leading: Icon(Icons.info_outline),
       title: Text('关于'),
       trailing: Icon(Icons.chevron_right),
+        onTap: () {
+          Navigator.of(context)
+              .push(new MaterialPageRoute<void>(builder: (BuildContext context) {
+            return new Scaffold(
+                appBar: new AppBar(title: Text("关于智景"),backgroundColor: Colors.cyan),
+                body: ListView(
+                  children: <Widget>[
+                    ListTile(
+                      title: Text('版本号'),
+                      subtitle: Text('1.1'),
+                    ),
+                    ListTile(
+                      title: Text('发布日期'),
+                      subtitle: Text('2019.09.08'),
+                    ),
+                    ListTile(
+                      title: Text('开发者'),
+                      subtitle: Text('SE231 Team 25'),
+                    ),
+                  ],
+                    ));
+          }));
+        }
       //onTap: () => _handleSettingsAction(context),
     );
   }
@@ -149,7 +176,8 @@ class SettingsPage extends StatelessWidget {
       final userModel = UserModel().of(context);
       userModel.dio.options.connectTimeout = 5000;
       userModel.dio.options.receiveTimeout = 3000;
-      Response<String> response = await userModel.dio.get("/user/view-nickname");
+      Response<String> response =
+      await userModel.dio.get("/user/view-nickname");
       if (response.statusCode == 200) {
         Map<String, dynamic> responseData = jsonDecode(response.data);
         print("${responseData["data"]}");
@@ -291,7 +319,10 @@ class VipPageState extends State<VipPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("会员"), backgroundColor: Colors.cyan,),
+        appBar: AppBar(
+          title: Text("会员"),
+          backgroundColor: Colors.cyan,
+        ),
         body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           _buildUserTile(context),
           _buildGrid(context),
@@ -413,5 +444,80 @@ class VipPageState extends State<VipPage> {
     setState(() {
       print(payResult);
     });
+  }
+}
+
+class SettingPage extends StatefulWidget {
+  @override
+  State<SettingPage> createState() => SettingPageState();
+}
+
+class SettingPageState extends State<SettingPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(title: Text("设置"),backgroundColor: Colors.cyan),
+        body: Column(children: [
+          ListTile(
+            leading: Icon(Icons.delete_outline),
+            title: Text('删除翻译记录'),
+            onTap: () {
+              deleteTranslation();
+              showDialog<Null>(
+                context: context,
+                builder: (BuildContext context) {
+                  return new Dialog(
+                      child: Padding(
+                          padding:
+                          const EdgeInsets.fromLTRB(16.0, 16.0, 8.0, 16.0),
+                          child: (Text("删除成功"))));
+                },
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.delete_outline),
+            title: Text('删除识别记录'),
+            onTap: () {
+              deleteRecognition();
+              showDialog<Null>(
+                context: context,
+                builder: (BuildContext context) {
+                  return new Dialog(
+                      child: Padding(
+                          padding:
+                          const EdgeInsets.fromLTRB(16.0, 16.0, 8.0, 16.0),
+                          child: (Text("删除成功"))));
+                },
+              );
+            },
+          )
+        ]));
+  }
+
+  deleteTranslation() async {
+    try {
+      Response response;
+
+      final userModel = UserModel().of(context);
+      userModel.initDio();
+      response = await userModel.dio.post("/translation/delete-history");
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  deleteRecognition() async {
+    try {
+      Response response;
+
+      final userModel = UserModel().of(context);
+      userModel.initDio();
+      response = await userModel.dio.post("/recognition/delete-history");
+    } catch (e) {
+      print(e);
+      return null;
+    }
   }
 }

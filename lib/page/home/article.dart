@@ -24,8 +24,8 @@ class ArticlePageState extends State<ArticlePage> {
         builder: (context, snapshot) {
           return ListView.builder(
             //reverse: true,
-            itemCount: _list == null ? 1 : _list.length + 1,
-            itemBuilder: (context, index) => index == 0
+            itemCount: _list == null ? 1 : _list.length ,
+            itemBuilder: (context, index) => /*index == 0
                 ? new Column(children: [
               new SizedBox(
                 child: new SlidePage(),
@@ -59,10 +59,10 @@ class ArticlePageState extends State<ArticlePage> {
                         ]),
                       ])),
             ])
-                : InkWell(
+                :*/ InkWell(
                 onTap: () {
-                  _showDetails(_list[index - 1].title,
-                      _list[index - 1].text, _list[index - 1].image);
+                  _showDetails(_list[index].title,
+                      _list[index].text, _list[index].image);
                 },
                 child: Card(
                     child: Column(
@@ -85,7 +85,7 @@ class ArticlePageState extends State<ArticlePage> {
                             padding: const EdgeInsets.all(16.0),
                             child: Image.network(
                               'http://47.100.191.229/article/get_picture?file_name=' +
-                                  _list[index - 1].image,
+                                  _list[index].image,
                             )),
                         Padding(
                           padding:
@@ -106,7 +106,7 @@ class ArticlePageState extends State<ArticlePage> {
                                           MainAxisAlignment.spaceAround,
                                           children: [
                                             new Text(
-                                              _list[index - 1].title,
+                                              _list[index].title,
                                               style: TextStyle(
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold),
@@ -114,7 +114,7 @@ class ArticlePageState extends State<ArticlePage> {
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                             new Text(
-                                              _list[index - 1].text,
+                                              _list[index].text,
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
